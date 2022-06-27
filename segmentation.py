@@ -35,8 +35,9 @@ def predict(model, image):
     results = model.detect([img_arr], verbose=0)
     r = results[0]
     img = display_instances(image, r['rois'], r['masks'], r['class_ids'], 
-                                ['BG', 'Nail'], r['scores'], figsize=(5,5))
-                                
+                                ['BG', 'Nail'], r['scores'], figsize=(5,5), show_bbox=False)
+    
+
 
 def main():
     st.title('Image upload demo')
