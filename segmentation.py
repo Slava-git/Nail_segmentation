@@ -2,18 +2,19 @@ import io
 import numpy as np
 from PIL import Image
 import streamlit as st
-from samples.custom.nails import InferenceConfig, display_instances
+from samples.custom.nails import InferenceConfig
+from mrcnn.visualize import display_instances
 from mrcnn import model as modellib
 from samples.custom.nails import DEFAULT_LOGS_DIR 
+
 
 def load_model():
     inference_config = InferenceConfig()
     model = modellib.MaskRCNN(mode="inference", 
                           config=inference_config,
                           model_dir=DEFAULT_LOGS_DIR)
-    model_path = model_path = '/content/drive/MyDrive/nails/mask_rcnn_nail_0004_second.h5'
+    model_path = model_path = 'C:/Users/Viacheslav/Downloads/rcnn_9_epochs.h5'
 
-    # Load trained weights (fill in path to trained weights here)
     assert model_path != "", "Provide path to trained weights"
     print("Loading weights from ", model_path)
     model.load_weights(model_path, by_name=True)
@@ -31,17 +32,27 @@ def load_image():
 
 
 def predict(model, image):
+    #image = np.asarray(image)
+    # if image.shape[-1] == 4:
+    #     image = image[..., :3]
+
     img_arr = np.array(image)
     results = model.detect([img_arr], verbose=0)
     r = results[0]
-    img = display_instances(image, r['rois'], r['masks'], r['class_ids'], 
+    img = display_instances(np.asarray(image), r['rois'], r['masks'], r['class_ids'], 
                                 ['BG', 'Nail'], r['scores'], figsize=(5,5), show_bbox=False)
-    
+
+    return img
 
 
 def main():
     st.title('Image upload demo')
-    load_image()
+    image = load_image()
+    result = st.button('Run on image')
+    if result:
+        model = load_model()
+        predicted_image = predict(model, image)
+        st.image(predicted_image, caption='Sunrise in your heart')
 
 
 if __name__ == '__main__':

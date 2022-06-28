@@ -113,7 +113,7 @@ def display_instances(image, boxes, masks, class_ids, class_names,
     # Generate random colors
     colors = colors or random_colors(N)
 
-    # Show area outside image boundaries.
+    #Show area outside image boundaries.
     height, width = image.shape[:2]
     ax.set_ylim(height + 10, -10)
     ax.set_xlim(-10, width + 10)
@@ -153,15 +153,15 @@ def display_instances(image, boxes, masks, class_ids, class_names,
         
         # Mask Polygon
         # Pad to ensure proper polygons for masks that touch image edges.
-        # padded_mask = np.zeros(
-        #     (mask.shape[0] + 2, mask.shape[1] + 2), dtype=np.uint8)
-        # padded_mask[1:-1, 1:-1] = mask
-        # contours = find_contours(padded_mask, 0.5)
-        # for verts in contours:
-        #     # Subtract the padding and flip (y, x) to (x, y)
-        #     verts = np.fliplr(verts) - 1
-        #     p = Polygon(verts, facecolor="none", edgecolor=color)
-        #     ax.add_patch(p)
+        padded_mask = np.zeros(
+            (mask.shape[0] + 2, mask.shape[1] + 2), dtype=np.uint8)
+        padded_mask[1:-1, 1:-1] = mask
+        contours = find_contours(padded_mask, 0.5)
+        for verts in contours:
+            # Subtract the padding and flip (y, x) to (x, y)
+            verts = np.fliplr(verts) - 1
+            p = Polygon(verts, facecolor="none", edgecolor=color)
+            ax.add_patch(p)
     # ax.imshow(masked_image.astype(np.uint8))
     # if auto_show:
     #     plt.show()
